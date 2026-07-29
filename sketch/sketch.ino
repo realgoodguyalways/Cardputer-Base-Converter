@@ -91,17 +91,39 @@ void loop() {
     changeBase(0);
   }
 
-  // if (output != "") {
-  //   switch (base) {
-  //     case 0:
-  //       getHex();
-  //       outputHex = hex;
-  //     case 1:
-  //       outputHex = hex;
-  //     case 2:
-  //       outputHex = hex;
-  //   }
-  // }
+  if (output != "") {
+    int decimal = 0;
+    int power = 1;
+    hex = "";
+
+    switch (base) {
+      case 0:
+        for (char digit : output) {
+          decimal = decimal * 10 + (digit - '0');
+        }
+
+        getHex(decimal);
+        outputHex = hex;
+        break;
+      case 1:
+        for (char digit : output) {
+          decimal = decimal * 2 + (digit - '0');
+        }
+
+        getHex(decimal);
+        outputHex = hex;
+        break;
+      case 2:
+
+        for (char digit : output) {
+          decimal = decimal * 8 + (digit - '0');
+        }
+
+        getHex(decimal);
+        outputHex = hex;
+        break;
+    }
+  }
 
     display.clearDisplay();
     display.setTextSize(1);
@@ -111,7 +133,7 @@ void loop() {
     display.println(bases[0] + var1 + outputDeci);
     display.println(bases[1] + var2 + outputBin);
     display.println(bases[2] + var3 + outputOct);
-    //display.println("Hex: " + outputHex);
+    display.println("Hex: " + outputHex);
 
     if (base == 0) {
       outputDeci = output;
@@ -244,17 +266,18 @@ void vars() {
   }
 }
 
-// void getHex() {
-//   int decimal = 0;
-//   while (decimal > 0) {
-//     int remaining = decimal % 16;
+void getHex(int decimal) {
+  String outputHex = "0";
 
-//     if (remaining < 10) {
-//       hex = char(remaining + '0') + hex;
-//     } else {
-//       hex = char(remaining - 10 + 'A') + hex;
-//     }
+  while (decimal > 0) {
+    int remaining = decimal % 16;
 
-//     decimal /= 16;
-//   }
-// }
+    if (remaining < 10) {
+      hex = char(remaining + '0') + hex;
+    } else {
+      hex = char(remaining - 10 + 'A') + hex;
+    }
+
+    decimal /= 16;
+  }
+}
