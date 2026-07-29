@@ -9,9 +9,11 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 String output = "";
+String hex = "";
 String outputDeci = "0";
 String outputOct = "0";
 String outputBin = "0";
+String outputHex = "0";
 String var1 = ": ";
 String var2 = "";
 String var3 = "";
@@ -89,6 +91,18 @@ void loop() {
     changeBase(0);
   }
 
+  // if (output != "") {
+  //   switch (base) {
+  //     case 0:
+  //       getHex();
+  //       outputHex = hex;
+  //     case 1:
+  //       outputHex = hex;
+  //     case 2:
+  //       outputHex = hex;
+  //   }
+  // }
+
     display.clearDisplay();
     display.setTextSize(1);
     display.setTextColor(SSD1306_WHITE);
@@ -97,6 +111,7 @@ void loop() {
     display.println(bases[0] + var1 + outputDeci);
     display.println(bases[1] + var2 + outputBin);
     display.println(bases[2] + var3 + outputOct);
+    //display.println("Hex: " + outputHex);
 
     if (base == 0) {
       outputDeci = output;
@@ -147,39 +162,72 @@ void changeBase(int y) {
 void change() {
   int decimal = 0;
   int power = 1;
+  String binary = "";
+  String octal = "";
   int oldBase = base;
   base = x;
 
-  if  (oldBase == 0) {
-    if (base == 1) { //decimal to binary
+  if (oldBase != base) {
 
-    } else { //decimal to octal
-
-    }
-  } else if (oldBase == 1) {
-    if (base == 0) { //binary to decimal
-
-      for (int i = output.length() - 1; i >= 0; i--) {
-        if (output[i] == '1') {
-          decimal += power;
-        }
-        power *= 2;
+    if  (oldBase == 0) {
+      decimal = 0;
+      for (char digit : output) {
+        decimal = decimal * 10 + (digit - '0');
       }
 
-      output = decimal;
-    } else { //binary to octal
+      if (base == 1) { //decimal to binary
+        while (decimal > 0) {
+          binary = char(decimal % 2 + '0') + binary;
+          decimal /= 2;
+        }
+
+        output = binary;
+      } else { //decimal to octal
+        while (decimal > 0) {
+          octal = char(decimal % 8 + '0') + octal;
+          decimal /= 8;
+        }
+
+        output = octal;
+      }
+    } else if (oldBase == 1) {
+      decimal = 0;
       
-    }
-  } else {
-    if (base == 0) { //octal to decimal
-      for (int i = output.length(); i >= 0; i--) {
+        for (int i = output.length() - 1; i >= 0; i--) {
+          if (output[i] == '1') {
+            decimal += power;
+          }
+          power *= 2;
+        }
+
+      if (base == 0) { //binary to decimal
+        output = decimal;
+      } else { //binary to octal
+        while (decimal > 0) {
+          octal = char(decimal % 8 + '0') + octal;
+          decimal /= 8;
+        }
+
+        output = octal;
+      }
+    } else {
+      decimal = 0;
+
+      for (int i = output.length() - 1; i >= 0; i--) {
         decimal += (output[i] - '0') * power;
         power *= 8;
       }
 
-      output = decimal;
-    } else { //octal to binary
-      
+      if (base == 0) { //octal to decimal
+        output = decimal;
+      } else { //octal to binary
+        while (decimal > 0) {
+          binary = char(decimal % 2 + '0') + binary;
+          decimal /= 2;
+
+          output = binary;
+        }
+      }
     }
   }
 }
@@ -195,3 +243,18 @@ void vars() {
     }
   }
 }
+
+// void getHex() {
+//   int decimal = 0;
+//   while (decimal > 0) {
+//     int remaining = decimal % 16;
+
+//     if (remaining < 10) {
+//       hex = char(remaining + '0') + hex;
+//     } else {
+//       hex = char(remaining - 10 + 'A') + hex;
+//     }
+
+//     decimal /= 16;
+//   }
+// }
